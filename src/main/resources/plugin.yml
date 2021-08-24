@@ -1,0 +1,17 @@
+name: FirstPlugin
+version: '${project.version}'
+main: nl.alamut.play.firstplugin.FirstPlugin
+api-version: 1.17
+prefix: Tut
+authors: [ Arakh ]
+description: Geen flauw idee, duitse tut
+website: alamut.nl
+
+
+commands:
+  test:
+    description: test command
+    usage: /<command>
+  fly:
+    description: just a simple fly command
+    usage: /<command>
