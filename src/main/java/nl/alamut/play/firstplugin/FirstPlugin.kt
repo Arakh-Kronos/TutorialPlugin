@@ -1,9 +1,12 @@
 package nl.alamut.play.firstplugin
 
 import nl.alamut.play.firstplugin.utils.settings.PREFIX
+import nl.alamut.play.firstplugin.utils.settings.msg
+import nl.alamut.play.firstplugin.utils.settings.msgAll
 import nl.alamut.play.firstplugin.utils.settings.send
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Server
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -30,53 +33,67 @@ public class FirstPlugin : JavaPlugin(), Listener, CommandExecutor {
 
         send("Lobby plugin is now disabled!")
     }
+
     @EventHandler
-    public fun moveEvent(event: PlayerMoveEvent){
-        var pos = event.player.location
-        var block = pos.block
-        block.type = Material.GRASS_BLOCK
-        if(block.type - 1 == Material.GRASS_BLOCK){
-            event.player.sendMessage(PREFIX + "Je staat op gras")
-        }
+     fun moveEvent(event: PlayerMoveEvent){
+        if(event.player.location.block.type != Material.GRASS_BLOCK) return
+        event.player.msg("Je staat op gras")
     }
+
     @EventHandler
     fun joinEvent(event: PlayerJoinEvent) {
-        event.player.sendMessage(PREFIX + event.player.name + " joined the game!")
-        val players = Bukkit.getOnlinePlayers()
-        for(p in players){
-            val perms = p.effectivePermissions
-            for(perm in perms){
-                p.sendMessage(PREFIX + perm.permission)
-            }
-            if(p.hasPermission("alamut.perms.test")){
-                p.sendMessage(PREFIX + "Je hebt de juiste permissie om dit command uit te voeren!")
-            }
+        event.joinMessage(null)
+        event.player.server.msgAll("${event.player.name} &ajoined &fthe game!")
+//        val perms = event.player.effectivePermissions
+//        perms.forEach {
+//           event.player.msg(it.permission)
+//        }
+
+        if (event.player.hasPermission("alamut.perms.test")) {
+            event.player.msg("Je hebt de juiste permissie om dit command uit te voeren!")
         }
-        }
+    }
+
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender is Player) {
             when (command.name) {
                 "test" -> {
-                    sender.sendMessage("${PREFIX}Dit is de output van het test command")
+                    sender.msg("Dit is de output van het test command")
                 }
                 "fly" -> {
-                    if(!sender.allowFlight && sender.hasPermission("alamut.command.fly")) {
-                        sender.sendMessage("${PREFIX}Your flight has been §aenabled§r!")
-                    } else if (sender.hasPermission("alamut.command.fly")) {
-                            sender.sendMessage("${PREFIX}Your flight has been §cdisabled§r!")
+                    if(args.isEmpty()) {
+                        sender.msg("&eGebruik dit command ook om andere spelers te laten vliegen! &f/fly (username)")
+
+                        if (!sender.allowFlight && sender.hasPermission("alamut.command.fly")) {
+                            sender.allowFlight = true
+                            sender.msg("Your flight has been &aenabled&r!")
+
+                        } else if (sender.hasPermission("alamut.command.fly")) {
+                            sender.msg("Your flight has been &cdisabled§r!")
                             sender.allowFlight = sender.allowFlight != true
                         } else
-                            sender.sendMessage("$PREFIX§cJe hebt niet de juiste permissie!")
+                            sender.msg("&cJe hebt niet de juiste permissie!")
+                    }  else if(args.size == 1) {
+                        val player = Bukkit.getOnlinePlayers().first {player -> player.name == args[0]}
+                        if(player != null) {
+                            player.allowFlight = !player.allowFlight
+                            if(player.allowFlight){
+                                sender.msg("Your flight has been &aenabled&r!")
+                            } else
+                                sender.msg("Your flight has been &cdisabled§r!")
+                        }
+
+                    }
                 }
             }
         }
         return true
     }
 
-    private fun runTimer(): Runnable {
+    fun runTimer(): Runnable {
         return Runnable {
-            Bukkit.broadcastMessage(PREFIX + "Test broadcast message")
+            Bukkit.broadcastMessage("${PREFIX}Test broadcast message")
         }
     }
 
