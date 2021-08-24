@@ -102,10 +102,7 @@ public class FirstPlugin : JavaPlugin(), Listener, CommandExecutor {
                 "heal" -> {
                     if (sender.hasPermission("alamut.command.heal")) {
                         sender.addPotionEffect(PotionEffect(PotionEffectType.REGENERATION, 40, 30, true))
-                        if (sender.health == 20.0) {
-                            sender.removePotionEffect(REGENERATION)
-                            sender.msg("&rYou have &asuccessfully &rbeen &ahealed&r!")
-                        }
+                        sender.msg("&rYou have &asuccessfully &rbeen &ahealed&r!")
                     } else
                         sender.msg(PERMERROR)
                 }
