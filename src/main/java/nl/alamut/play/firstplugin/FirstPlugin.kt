@@ -1,5 +1,6 @@
 package nl.alamut.play.firstplugin
 
+import nl.alamut.play.firstplugin.utils.settings.PERMERROR
 import nl.alamut.play.firstplugin.utils.settings.PREFIX
 import nl.alamut.play.firstplugin.utils.settings.msg
 import nl.alamut.play.firstplugin.utils.settings.msgAll
@@ -16,6 +17,10 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
+import org.bukkit.potion.PotionEffectType.REGENERATION
+import org.bukkit.potion.PotionEffectType.registerPotionEffectType
 
 
 public class FirstPlugin : JavaPlugin(), Listener, CommandExecutor {
@@ -50,7 +55,7 @@ public class FirstPlugin : JavaPlugin(), Listener, CommandExecutor {
 //        }
 
         if (event.player.hasPermission("alamut.perms.test")) {
-            event.player.msg("Je hebt de juiste permissie om dit command uit te voeren!")
+            event.player.msg("Je hebt de &ajuiste permissie&r om dit command uit te voeren!")
         }
     }
 
@@ -62,7 +67,7 @@ public class FirstPlugin : JavaPlugin(), Listener, CommandExecutor {
                     sender.msg("Dit is de output van het test command")
                 }
                 "fly" -> {
-                    if(args.isEmpty()) {
+                    if (args.isEmpty()) {
                         sender.msg("&eGebruik dit command ook om andere spelers te laten vliegen! &f/fly (username)")
 
                         if (!sender.allowFlight && sender.hasPermission("alamut.command.fly")) {
@@ -73,18 +78,36 @@ public class FirstPlugin : JavaPlugin(), Listener, CommandExecutor {
                             sender.msg("Your flight has been &cdisabled§r!")
                             sender.allowFlight = sender.allowFlight != true
                         } else
-                            sender.msg("&cJe hebt niet de juiste permissie!")
-                    }  else if(args.size == 1) {
-                        val player = Bukkit.getOnlinePlayers().first {player -> player.name == args[0]}
-                        if(player != null) {
+                            sender.msg(PERMERROR)
+                    } else if (args.size == 1) {
+                        val player = Bukkit.getOnlinePlayers().first { player -> player.name == args[0] }
+                        if (player != null) {
                             player.allowFlight = !player.allowFlight
-                            if(player.allowFlight){
-                                sender.msg("Your flight has been &aenabled&r!")
+                            if (player.allowFlight) {
+                                sender.msg("You have &aenabled &fflight for${player.name}")
+                                player.msg("Your flight has been &aenabled&r!")
                             } else
-                                sender.msg("Your flight has been &cdisabled§r!")
+                                sender.msg("You have &cdisabled &fflight for${player.name}")
+                            player.msg("Your flight has been &cdisabled§r!")
                         }
 
                     }
+                }
+                "broadcast" -> {
+                    if (sender.hasPermission("alamut.command.broadcast")) {
+                        sender.server.msgAll(args.joinToString(separator = " "))
+                    } else
+                        sender.msg(PERMERROR)
+                }
+                "heal" -> {
+                    if (sender.hasPermission("alamut.command.heal")) {
+                        sender.addPotionEffect(PotionEffect(PotionEffectType.REGENERATION, 40, 30, true))
+                        if (sender.health == 20.0) {
+                            sender.removePotionEffect(REGENERATION)
+                            sender.msg("&rYou have &asuccessfully &rbeen &ahealed&r!")
+                        }
+                    } else
+                        sender.msg(PERMERROR)
                 }
             }
         }

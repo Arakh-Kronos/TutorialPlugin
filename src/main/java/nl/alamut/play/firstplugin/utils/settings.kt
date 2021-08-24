@@ -5,7 +5,8 @@ import org.bukkit.Server
 import org.bukkit.command.CommandSender
 
 object settings {
-    val PREFIX = "§6§lAlamut » §r"
+    val PREFIX = "&6&lAlamut » &r".translateColorCode()
+    val PERMERROR = "&cJe hebt geen permissie om dit command te gebruiken!"
 
     fun send(message: String) {
         Bukkit.getConsoleSender().sendMessage("$PREFIX$message")

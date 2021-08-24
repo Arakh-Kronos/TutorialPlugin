@@ -15,3 +15,10 @@ commands:
   fly:
     description: just a simple fly command
     usage: /<command>
+  broadcast:
+    description: Shout a message to all players on the server
+    usage: /<command>
+    aliases: [bc]
+  heal:
+    description: heals the player
+    usage: /<command>
