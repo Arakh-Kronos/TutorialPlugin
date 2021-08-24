@@ -1,6 +1,7 @@
 package nl.alamut.play.firstplugin.utils
 
 import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
 
 object settings {
 
@@ -8,8 +9,12 @@ object settings {
 
     fun send(message: String) {
         Bukkit.getConsoleSender().sendMessage("$PREFIX$message")
+
+        fun sender.msg(message: string) {
+            it.sendMessage("$PREFIX $message")
+        }
     }
 
-    public var players = Bukkit.getOnlinePlayers()
+    
 
 }

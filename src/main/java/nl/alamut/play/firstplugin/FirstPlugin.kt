@@ -3,6 +3,7 @@ package nl.alamut.play.firstplugin
 import nl.alamut.play.firstplugin.utils.settings.PREFIX
 import nl.alamut.play.firstplugin.utils.settings.send
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.plugin.java.JavaPlugin
 
 
@@ -28,7 +30,15 @@ public class FirstPlugin : JavaPlugin(), Listener, CommandExecutor {
 
         send("Lobby plugin is now disabled!")
     }
-
+    @EventHandler
+    public fun moveEvent(event: PlayerMoveEvent){
+        var pos = event.player.location
+        var block = pos.block
+        block.type = Material.GRASS_BLOCK
+        if(block.type - 1 == Material.GRASS_BLOCK){
+            event.player.sendMessage(PREFIX + "Je staat op gras")
+        }
+    }
     @EventHandler
     fun joinEvent(event: PlayerJoinEvent) {
         event.player.sendMessage(PREFIX + event.player.name + " joined the game!")
